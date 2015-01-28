@@ -1,25 +1,134 @@
 apply plugin: 'com.android.library'
+apply plugin: 'android-maven'
+apply plugin: 'com.jfrog.bintray'
+apply from: '../gradle.properties'
+
+def siteUrl = 'https://github.com/thomashaertel/secure-preferences'      // Homepage URL of the library
+def gitUrl = 'https://github.com/thomashaertel/secure-preferences.git'   // Git repository URL
+def scmUrl = 'scm:git@github.com:thomashaertel/secure-preferences.git'   // SCM repository URL
+def issueUrl = 'https://github.com/thomashaertel/secure-preferences/issues' // Issue Tracker URL
+def libraryVersionCode = 1
+def libraryVersion = '0.4.1'
+
+// set project version and group
+version = libraryVersion
+group = 'com.thomashaertel'
 
 android {
-    compileSdkVersion 21
-    buildToolsVersion '21.1.1'
+    compileSdkVersion global_compileSdkVersion
+    buildToolsVersion global_buildToolsVersion
 
     defaultConfig {
-        minSdkVersion 8
-        targetSdkVersion 21
-        versionCode 1
-        versionName "1.0"
+        minSdkVersion global_minSdkVersion
+        targetSdkVersion global_targetSdkVersion
+        versionCode libraryVersionCode
+        versionName libraryVersion
     }
 
-    sourceSets {
-        main {
-            assets.srcDirs       = ['assets']
-            res.srcDirs          = ['res']
-            aidl.srcDirs         = ['src']
-            resources.srcDirs    = ['src']
-            renderscript.srcDirs = ['src']
-            java.srcDirs         = ['src']
-            manifest.srcFile 'AndroidManifest.xml'
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+
+    lintOptions {
+        abortOnError false
+    }
+}
+
+task androidJavadocs(type: Javadoc) {
+    source = android.sourceSets.main.java.srcDirs
+    classpath += project.files(android.getBootClasspath().join(File.pathSeparator))
+}
+
+task androidJavadocsJar(type: Jar, dependsOn: androidJavadocs) {
+    classifier = 'javadoc'
+    from androidJavadocs.destinationDir
+}
+
+task androidSourcesJar(type: Jar) {
+    classifier = 'sources'
+    from android.sourceSets.main.java.srcDirs
+}
+
+artifacts {
+    archives androidSourcesJar
+    archives androidJavadocsJar
+}
+
+dependencies {
+}
+
+install {
+    repositories.mavenInstaller {
+        pom {
+            project {
+                artifactId 'secure-preferences'
+                name 'Secure Preferences Implementation'
+                packaging 'aar'
+                description 'Secure Preferences Provider'
+                url siteUrl
+
+                scm {
+                    url siteUrl
+                    connection scmUrl
+                    developerConnection scmUrl
+                }
+
+                licenses {
+                    license {
+                        name 'The Apache License'
+                        url 'http://www.apache.org/licenses/LICENSE-2.0'
+                        distribution 'repo'
+                    }
+                }
+
+                developers {
+                    developer {
+                        id 'thomashaertel'
+                        name 'Thomas Haertel'
+                        email 'mail@thomashaertel.com'
+                    }
+                }
+            }
+        }
+    }
+}
+
+bintray {
+    user = project.hasProperty('bintrayUser') ? project.property('bintrayUser') : System.getenv('bintrayUser')
+    key = project.hasProperty('bintrayApikey') ? project.property('bintrayApikey') : System.getenv('bintrayApikey')
+
+    configurations = ['archives'] //When uploading configuration files
+
+    pkg {
+        repo = 'maven'
+        name = 'secure-preferences'
+        desc = 'Secure Preferences Implementation'
+        websiteUrl = siteUrl
+        issueTrackerUrl = issueUrl
+        vcsUrl = gitUrl
+        licenses = ['Apache']
+        labels = ['preferences', 'secure', 'android']
+        publicDownloadNumbers = true
+
+        version {
+            name = libraryVersion
+            vcsTag = libraryVersion
+            gpg {
+                sign = true //Determines whether to GPG sign the files. The default is false
+                passphrase = project.hasProperty('gpgPassphrase') ? project.property('gpgPassphrase') : System.getenv('gpgPassphrase') //Optional. The passphrase for GPG signing'
+            }
+            properties.has
+/*            mavenCentralSync {
+                sync = true
+                //Optional (true by default). Determines whether to sync the version to Maven Central.
+                user = project.hasProperty('sonatypeUser') ? project.property('sonatypeUser') : System.getenv('sonatypeUser') //OSS user token
+                password = project.hasProperty('sonatypeUser') ? project.property('sonatypeUser') : System.getenv('sonatypeUser') //OSS user password
+                close = '1'
+                //Optional property. By default the staging repository is closed and artifacts are released to Maven Central. You can optionally turn this behaviour off (by puting 0 as value) and release the version manually.
+            }*/
         }
     }
 }
