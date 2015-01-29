@@ -21,6 +21,6 @@ android {
 }
 
 dependencies {
-    compile project(':library')
+    compile project(':secure-preferences')
     compile fileTree(dir: 'libs', include: ['*.jar'])
 }
