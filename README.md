@@ -87,7 +87,7 @@ Then declare Android Calendar View within your dependencies:
 ```groovy
 dependencies {
   ...
-  compile('com.thomashaertel:secure-preferences:0.1.0@aar') {
+  compile('com.thomashaertel:secure-preferences:0.2.0@aar') {
   }
   ...
 }
@@ -136,7 +136,7 @@ Apache License, Version 2.0
 
 
 
-    Copyright (C) 2013, Daniel Abraham, Scott Alexander-Bown
+    Copyright (C) 2013, Daniel Abraham, Scott Alexander-Bown, 2015 Thomas Haertel
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
