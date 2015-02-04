@@ -19,10 +19,6 @@
 
 package com.securepreferences.sample;
 
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Set;
-
 import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -37,126 +33,129 @@ import android.widget.Toast;
 
 import com.securepreferences.SecurePreferences;
 
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Set;
+
 public class MainActivity extends Activity {
     private SecurePreferences mSecurePrefs;
-	private SharedPreferences mInSecurePrefs;
+    private SharedPreferences mInSecurePrefs;
 
-	private TextView encValuesTextView;
+    private TextView encValuesTextView;
 
-	private static final String KEY = "Foo";
-	private static final String VALUE = "Bar";
+    private static final String KEY = "Foo";
+    private static final String VALUE = "Bar";
 
-	@Override
-	protected void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_main);
-		initViews();
-		initPrefs();
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+        initViews();
+        initPrefs();
 
-		updateEncValueDisplay();
+        updateEncValueDisplay();
 
-		mInSecurePrefs
-				.registerOnSharedPreferenceChangeListener(new OnSharedPreferenceChangeListener() {
-					@Override
-					public void onSharedPreferenceChanged(
-							SharedPreferences sharedPreferences, String key) {
-						updateEncValueDisplay();
-					}
-				});
-
-        // listen for specific keys and receive unencrypted key name on change
-        mSecurePrefs
+        mInSecurePrefs
                 .registerOnSharedPreferenceChangeListener(new OnSharedPreferenceChangeListener() {
                     @Override
                     public void onSharedPreferenceChanged(
                             SharedPreferences sharedPreferences, String key) {
-                        Toast.makeText(MainActivity.this,
-                                "SecurePreference changed with key: " + key,
-                                Toast.LENGTH_SHORT).show();
+                        updateEncValueDisplay();
                     }
-                },
-                true);
-	}
+                });
 
-	private void initViews() {
-		encValuesTextView = (TextView) findViewById(R.id.fooValueEncTV);
-		TextView linkToGibhubTv = (TextView) findViewById(R.id.LinkToGithub);
-		linkToGibhubTv.setMovementMethod(LinkMovementMethod.getInstance());
-	}
+        // listen for specific keys and receive unencrypted key name on change
+        mSecurePrefs
+                .registerOnSharedPreferenceChangeListener(new OnSharedPreferenceChangeListener() {
+                                                              @Override
+                                                              public void onSharedPreferenceChanged(
+                                                                      SharedPreferences sharedPreferences, String key) {
+                                                                  Toast.makeText(MainActivity.this,
+                                                                          "SecurePreference changed with key: " + key,
+                                                                          Toast.LENGTH_SHORT).show();
+                                                              }
+                                                          },
+                        true);
+    }
 
-	private void initPrefs() {
-		mSecurePrefs = new SecurePreferences(this);
-		SecurePreferences.setLoggingEnabled(true);
-		mInSecurePrefs = PreferenceManager
-				.getDefaultSharedPreferences(getApplicationContext());
-	}
+    private void initViews() {
+        encValuesTextView = (TextView) findViewById(R.id.fooValueEncTV);
+        TextView linkToGibhubTv = (TextView) findViewById(R.id.LinkToGithub);
+        linkToGibhubTv.setMovementMethod(LinkMovementMethod.getInstance());
+    }
 
-	/**
-	 * this is just for demo purposes so you can see the dumped content of the
-	 * actual shared prefs file without needing a rooted device
-	 */
-	private void updateEncValueDisplay() {
-		Map<String, ?> all = mInSecurePrefs.getAll();
-		if (!all.isEmpty()) {
-			StringBuilder builder = new StringBuilder();
-			Set<String> keys = all.keySet();
-			Iterator<String> it = keys.iterator();
-			while (it.hasNext()) {
-				String key = it.next();
-				builder.append("key:" + key);
-				Object value = all.get(key);
-				if (value instanceof String) {
-					builder.append("\nvalue:" + (String) value);
-				}
-				builder.append("\n");
-			}
-			encValuesTextView.setText(builder.toString());
-		}
+    private void initPrefs() {
+        mSecurePrefs = new SecurePreferences(this);
+        mSecurePrefs.setLoggingEnabled(true);
+        mInSecurePrefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+    }
 
-	}
+    /**
+     * this is just for demo purposes so you can see the dumped content of the
+     * actual shared prefs file without needing a rooted device
+     */
+    private void updateEncValueDisplay() {
+        Map<String, ?> all = mInSecurePrefs.getAll();
+        if (!all.isEmpty()) {
+            StringBuilder builder = new StringBuilder();
+            Set<String> keys = all.keySet();
+            Iterator<String> it = keys.iterator();
+            while (it.hasNext()) {
+                String key = it.next();
+                builder.append("key:" + key);
+                Object value = all.get(key);
+                if (value instanceof String) {
+                    builder.append("\nvalue:" + (String) value);
+                }
+                builder.append("\n");
+            }
+            encValuesTextView.setText(builder.toString());
+        }
 
-	public void onGetButtonClick(View v) {
-		final String value = mSecurePrefs.getString(MainActivity.KEY, null);
-		Toast.makeText(this, "Value = " + value, Toast.LENGTH_SHORT).show();
-	}
+    }
 
-	public void onSetButtonClick(View v) {
-		mSecurePrefs.edit().putString(MainActivity.KEY, MainActivity.VALUE)
-				.commit();
-		Toast.makeText(
-				this,
-				MainActivity.KEY + " with value:" + MainActivity.VALUE
-						+ ". Saved", Toast.LENGTH_SHORT).show();
-	}
+    public void onGetButtonClick(View v) {
+        final String value = mSecurePrefs.getString(MainActivity.KEY, null);
+        Toast.makeText(this, "Value = " + value, Toast.LENGTH_SHORT).show();
+    }
 
-	public void onRemoveButtonClick(View v) {
-		mSecurePrefs.edit().remove(MainActivity.KEY).commit();
-		Toast.makeText(this,
-				"key:" + MainActivity.KEY + " removed from secure prefs",
-				Toast.LENGTH_SHORT).show();
-	}
+    public void onSetButtonClick(View v) {
+        mSecurePrefs.edit().putString(MainActivity.KEY, MainActivity.VALUE)
+                .commit();
+        Toast.makeText(
+                this,
+                MainActivity.KEY + " with value:" + MainActivity.VALUE
+                        + ". Saved", Toast.LENGTH_SHORT).show();
+    }
 
-	public void onClearAllButtonClick(View v) {
-		mSecurePrefs.edit().clear().commit();
-		mInSecurePrefs.edit().clear().commit();
-		initPrefs();
-		updateEncValueDisplay();
-		Toast.makeText(this, "key:" + "All secure prefs cleared",
-				Toast.LENGTH_SHORT).show();
-	}
+    public void onRemoveButtonClick(View v) {
+        mSecurePrefs.edit().remove(MainActivity.KEY).commit();
+        Toast.makeText(this,
+                "key:" + MainActivity.KEY + " removed from secure prefs",
+                Toast.LENGTH_SHORT).show();
+    }
 
-	public void onActivityButtonClick(View v) {
-		startActivity(new Intent(this, OldPreferenceActivity.class));
-	}
+    public void onClearAllButtonClick(View v) {
+        mSecurePrefs.edit().clear().commit();
+        mInSecurePrefs.edit().clear().commit();
+        initPrefs();
+        updateEncValueDisplay();
+        Toast.makeText(this, "key:" + "All secure prefs cleared",
+                Toast.LENGTH_SHORT).show();
+    }
 
-	public void onFragmentButtonClick(View v) {
-		// TODO: show an example with something like unified prefs
-		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
-			startActivity(new Intent(this, NewPreferenceActivity.class));
-		} else {
-			Toast.makeText(this,
-					"PreferenceFragment not support before Android 3.0",
-					Toast.LENGTH_SHORT).show();
-		}
-	}
+    public void onActivityButtonClick(View v) {
+        startActivity(new Intent(this, OldPreferenceActivity.class));
+    }
+
+    public void onFragmentButtonClick(View v) {
+        // TODO: show an example with something like unified prefs
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+            startActivity(new Intent(this, NewPreferenceActivity.class));
+        } else {
+            Toast.makeText(this,
+                    "PreferenceFragment not support before Android 3.0",
+                    Toast.LENGTH_SHORT).show();
+        }
+    }
 }
