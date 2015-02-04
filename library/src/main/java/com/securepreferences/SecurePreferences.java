@@ -49,12 +49,12 @@ import javax.crypto.spec.SecretKeySpec;
  * Wrapper class for Android's {@link SharedPreferences} interface, which adds a
  * layer of encryption to the persistent storage and retrieval of sensitive
  * key-value pairs of primitive data types.
- * <p/>
+ *
  * This class provides important - but nevertheless imperfect - protection
  * against simple attacks by casual snoopers. It is crucial to remember that
  * even encrypted data may still be susceptible to attacks, especially on rooted
  * or stolen devices!
- * <p/>
+ *
  *
  * @see <a href="http://www.codeproject.com/Articles/549119/Encryption-Wrapper-for-Android-SharedPreferences">CodeProject article</a>
  */
@@ -64,12 +64,12 @@ public class SecurePreferences implements SharedPreferences {
 
     /**
      * Cipher types that can be used
-     * <li>{@link #BC_AES_PBKDF2_SHA1}: Bouncy Castle Provider with AES Key and PBKDF2/HMAC/SHA1 cipher</li>
-     * <li>{@link #BC_AES_PBE_TRIPLE_DES}: Bouncy Castle Provider with AES Key and PBE/MD5/DES cipher</li>
-     * <li>{@link #SC_AES_GCM}: Spongy Castle Provider with AES/GCM Key, no padding and PBKDF2/HMAC/SHA1 cipher</li>
-     * <li>{@link #SC_AES_CBC_PKCS5}: Spongy Castle Provider with AES/CBC Key, PKCS5 padding and PBKDF2/HMAC/SHA1 cipher</li>
-     * <p/>
-     * All cipher types fallback to Password-Based Encryption and MD5/DES.
+     * -{@link #BC_AES_PBKDF2_SHA1}: Bouncy Castle Provider with AES Key and PBKDF2//HMAC//SHA1 cipher
+     * -{@link #BC_AES_PBE_TRIPLE_DES}: Bouncy Castle Provider with AES Key and PBE//MD5//DES cipher
+     * -{@link #SC_AES_GCM}: Spongy Castle Provider with AES//GCM Key, no padding and PBKDF2//HMAC//SHA1 cipher
+     * -{@link #SC_AES_CBC_PKCS5}: Spongy Castle Provider with AES//CBC Key, PKCS5 padding and PBKDF2//HMAC//SHA1 cipher
+     *
+     * All cipher types fallback to Password-Based Encryption and MD5//DES.
      */
     public enum CipherType {
         BC_AES_PBKDF2_SHA1("BC", "AES", "PBKDF2WithHmacSHA1", "PBEWithMD5AndDES"),
@@ -248,7 +248,7 @@ public class SecurePreferences implements SharedPreferences {
      * @param iterations      - Number of PBKDF2 hardening rounds to use. Larger values
      *                        increase computation time (a good thing), defaults to 1000 if
      *                        not set.
-     * @param keyLength
+     * @param keyLength       length of the key
      * @return Derived Secretkey
      * @throws NoSuchAlgorithmException
      * @throws InvalidKeySpecException
@@ -369,8 +369,8 @@ public class SecurePreferences implements SharedPreferences {
      * Added to get a values as as it can be useful to store values that are
      * already encrypted and encoded
      *
-     * @param key
-     * @param defaultValue
+     * @param key the key to lookup the value
+     * @param defaultValue returned if key is not found
      * @return Unencrypted value of the key or the defaultValue if
      */
     public String getStringUnencrypted(String key, String defaultValue) {
@@ -473,7 +473,7 @@ public class SecurePreferences implements SharedPreferences {
 
     /**
      * Wrapper for Android's {@link android.content.SharedPreferences.Editor}.
-     * <p/>
+     *
      * Used for modifying values in a {@link SecurePreferences} object. All
      * changes you make in an editor are batched, and not copied back to the
      * original {@link SecurePreferences} until you call {@link #commit()} or
@@ -503,7 +503,7 @@ public class SecurePreferences implements SharedPreferences {
          *
          * @param key   - encrypted as usual
          * @param value will not be encrypted
-         * @return
+         * @return {@link Editor}
          */
         public SharedPreferences.Editor putStringNoEncrypted(String key, String value) {
             mEditor.putString(mPrefs.isEncryptKeys() ? mPrefs.encrypt(key) : key, value);
