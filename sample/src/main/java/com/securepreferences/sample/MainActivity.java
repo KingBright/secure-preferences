@@ -96,22 +96,26 @@ public class MainActivity extends Activity {
      */
     private void updateEncValueDisplay() {
         Map<String, ?> all = mInSecurePrefs.getAll();
+
         if (!all.isEmpty()) {
             StringBuilder builder = new StringBuilder();
             Set<String> keys = all.keySet();
             Iterator<String> it = keys.iterator();
+
             while (it.hasNext()) {
                 String key = it.next();
                 builder.append("key:" + key);
                 Object value = all.get(key);
+
                 if (value instanceof String) {
                     builder.append("\nvalue:" + (String) value);
                 }
+
                 builder.append("\n");
             }
+
             encValuesTextView.setText(builder.toString());
         }
-
     }
 
     public void onGetButtonClick(View v) {
@@ -122,17 +126,12 @@ public class MainActivity extends Activity {
     public void onSetButtonClick(View v) {
         mSecurePrefs.edit().putString(MainActivity.KEY, MainActivity.VALUE)
                 .commit();
-        Toast.makeText(
-                this,
-                MainActivity.KEY + " with value:" + MainActivity.VALUE
-                        + ". Saved", Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, MainActivity.KEY + " with value:" + MainActivity.VALUE + ". Saved", Toast.LENGTH_SHORT).show();
     }
 
     public void onRemoveButtonClick(View v) {
         mSecurePrefs.edit().remove(MainActivity.KEY).commit();
-        Toast.makeText(this,
-                "key:" + MainActivity.KEY + " removed from secure prefs",
-                Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, "key:" + MainActivity.KEY + " removed from secure prefs", Toast.LENGTH_SHORT).show();
     }
 
     public void onClearAllButtonClick(View v) {
@@ -140,8 +139,7 @@ public class MainActivity extends Activity {
         mInSecurePrefs.edit().clear().commit();
         initPrefs();
         updateEncValueDisplay();
-        Toast.makeText(this, "key:" + "All secure prefs cleared",
-                Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, "key:" + "All secure prefs cleared", Toast.LENGTH_SHORT).show();
     }
 
     public void onActivityButtonClick(View v) {
@@ -153,9 +151,7 @@ public class MainActivity extends Activity {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
             startActivity(new Intent(this, NewPreferenceActivity.class));
         } else {
-            Toast.makeText(this,
-                    "PreferenceFragment not support before Android 3.0",
-                    Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "PreferenceFragment not support before Android 3.0", Toast.LENGTH_SHORT).show();
         }
     }
 }
