@@ -14,6 +14,12 @@ Much of the original code is from Daniel Abraham article on [codeproject](http:/
  
 
 ##Release Notes:
+0.2.0
+* Changed instantiation similar to SharedPreferences
+* Moved static class attributes to be members to support multiple preference stores in different files
+* Added the possibility to change the encryption provider
+* Key can be stored either encrypted or as plaintext
+
 0.1.0
 * Android Studio supported project structure
 * Created android library on bintray and maven central
