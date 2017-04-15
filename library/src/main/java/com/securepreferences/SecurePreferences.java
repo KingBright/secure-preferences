@@ -487,8 +487,8 @@ public class SecurePreferences implements SharedPreferences {
          * Constructor.
          */
         private Editor(SecurePreferences prefs) {
-            mEditor = mPrefs.edit();
             mPrefs = prefs;
+            mEditor = mPrefs.edit();
         }
 
         @Override
